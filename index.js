@@ -1,6 +1,9 @@
 const rp = require('request-promise');
 const $ = require('cheerio');
+const fs = require('fs');
+
 const url = 'http://localhost:5500/sampleData.html';
+
 
 rp(url)
     .then(function (html) {
@@ -26,10 +29,9 @@ rp(url)
 
         // create array of arrays [numBids, finalPrice, minBid, estimate ]
         const dataArray = [numBids, finalPrice, minBid, estimate];
-        console.log(dataArray);
 
         // create array of objects assigning various data as needed
-         lotNumbers.each((i,e) => {
+        lotNumbers.each((i, e) => {
             const dataObj = {
                 'Lot_Number': e.children[0].data,
                 'Item_name': productNames[i].attribs.alt,
@@ -42,17 +44,14 @@ rp(url)
             allThatData.push(dataObj);
         })
 
-        console.log(allThatData);
+        fs.appendFile('data.json', JSON.stringify(allThatData), (err) => {
+            if (err) throw err;
+            console.log('done')
 
-
-
-
-        // lotNumbers.each((i,e) => console.log(e.children[0].data));
-        // productNames.each((i,e) => console.log(e.attribs.alt));
-        // lotData.each((i,e) => console.log(e.children[0].data));
+        })
 
 
     })
     .catch(function (err) {
-        //handle error
+        console.log('bummer!')
     })
